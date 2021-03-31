@@ -1,55 +1,35 @@
 .user{
-    position: relative; top: 0; left: 0;
-    width: 100%;
+    width: 50%;
     height: 100%;
     min-height: 100vh;
-    padding: 2vw;
-    .header{
-        width: 100%;
-    }
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
 
-    .Ships{
-        display : grid;
-        grid-template-columns: repeat(10,1rem);
-        grid-template-rows: repeat(10,1rem);
+    .myships{
+        margin-top: 3rem;
+        display: grid;
+        width: 10rem;
+        height: 10rem;
+        grid-template-columns: repeat(10, 1rem);
+        grid-template-rows: repeat(10, 1rem);
+        border: 1px solid red;
 
 
-        .rect{
-            width: 1rem;
-            height:  1rem;
+        .box{
             border: 1px solid black;
+            width: 1rem;
+            height: 1rem;
         }
         .ship{
-            display: flex;
-            background-color: red;
+            background-color: blue;
+            width: 100%;
+            height: 100%;
 
-            &:-moz-drag-over{
-                cursor:pointer;
+            div{
+                width: 1rem;
+                height: 1rem;
             }
         }
-        .ship[data-direction="column"]{
-            flex-direction: column;
-        }
-        .ship[data-direction="row"]{
-            flex-direction: row;
-        }
-        // .cell2{
-        //     grid-area: 5/6 / 9/6;
-        //     background-color: red;
-        // }
-        // .cell3{
-        //     grid-area: 1/5 / 1/8;
-        //     background-color: blue;
-        // }
-        // .cell4{
-        //     grid-area: 4/8 / 7/8;
-        //     background-color: red;
-        // }
-        // .cell5{
-        //     grid-area: 10/2 / 10/4;
-        //     background-color: red;
-        // }
     }
-
-
 }

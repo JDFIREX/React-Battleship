@@ -1,7 +1,7 @@
 import React, {useContext} from "react"
 import {Context} from "./../../useReducer"
-import {Link} from "react-router-dom"
 import "./main.css"
+import User from "./../User/User"
 
 const Main = () => {
 
@@ -9,16 +9,8 @@ const Main = () => {
 
     return(
         <>
-            <div className="userBtn">
-                <Link  to="./User/1" target="_blank" >
-                    <h1>User1</h1>
-                </Link>
-            </div>
-            <div className="userBtn">
-                <Link  to="./User/2" target="_blank" >
-                    <h1>User2</h1>
-                </Link>
-            </div>
+            <User id={1} key={1} />
+            <User id={2} key={2} />
         </>
     )
 }

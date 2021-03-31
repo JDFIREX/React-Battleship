@@ -1,54 +1,43 @@
 .user {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
+  width: 50%;
   height: 100%;
   min-height: 100vh;
-  padding: 2vw;
+  border: 1px solid black;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
-.user .header {
-  width: 100%;
-}
-
-.user .Ships {
+.user .myships {
+  margin-top: 3rem;
   display: -ms-grid;
   display: grid;
+  width: 10rem;
+  height: 10rem;
   -ms-grid-columns: (1rem)[10];
       grid-template-columns: repeat(10, 1rem);
   -ms-grid-rows: (1rem)[10];
       grid-template-rows: repeat(10, 1rem);
+  border: 1px solid red;
 }
 
-.user .Ships .rect {
+.user .myships .box {
+  border: 1px solid black;
   width: 1rem;
   height: 1rem;
-  border: 1px solid black;
 }
 
-.user .Ships .ship {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  background-color: red;
+.user .myships .ship {
+  background-color: blue;
+  width: 100%;
+  height: 100%;
 }
 
-.user .Ships .ship:-moz-drag-over {
-  cursor: pointer;
-}
-
-.user .Ships .ship[data-direction="column"] {
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-}
-
-.user .Ships .ship[data-direction="row"] {
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
+.user .myships .ship div {
+  width: 1rem;
+  height: 1rem;
 }
 /*# sourceMappingURL=user.css.map */
