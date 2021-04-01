@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react"
 import {Context} from "./../../useReducer"
 import "./user.css"
-import confirmPoss from "./Poss"
+import {DragEnd,Rotate} from "./Poss"
 
 const Box = ({a}) => <div className={`box  ${a.id}`}></div>
 const Btns = ({selected,user,dispatch,setMess}) => {
@@ -47,52 +47,11 @@ const Mess = ({mess}) => (
         }
     </div>
 ) 
-const Rotate = (ship,user,dispatch,rotate,setMess) => {
-    let sl = ship.cells;
-    let nd;
-    let top;
-    let left;
-    
-    if(rotate === "left"){
-        if(ship.direction === "row"){
-            top = ship.poss.y1 - (sl - 1);
-            left = ship.poss.x1; 
-            nd = "column";
-        }else {
-            top  = ship.poss.y2 - 1;
-            left = ship.poss.x1 - (sl - 1);
-            nd = "row"
-        }
-    }else{
-        if(ship.direction === "row"){
-            top = ship.poss.y1 - (sl - 1);
-            left = ship.poss.x2 - 1; 
-            nd = "column";
-        }else {
-            top  = ship.poss.y2 - 1;
-            left = ship.poss.x1;
-            nd = "row"
-        }
-    }
 
-    confirmPoss(top,left,sl,nd,0,user,ship,dispatch,setMess)
-
-}
 const SetShip = ({ship,user,onClick,selected}) => {
 
     const [element,setElement] = useState(0)
     const [state,dispatch] = useContext(Context)
-
-
-    const DragEnd = (e) => {
-        let coords = document.querySelector(`.myships${user.user}`).getBoundingClientRect();
-        let top = Math.ceil((e.pageY - coords.top) / 36)
-        let left = Math.ceil((e.pageX - coords.left) / 36)
-        let slength = user.ships[e.target.dataset.ship].cells;
-        let direction = user.ships[e.target.dataset.ship].direction;
-        confirmPoss(top,left,slength,direction,element,user,ship,dispatch,false)
-
-    }
 
     return (
         <div 
@@ -100,7 +59,7 @@ const SetShip = ({ship,user,onClick,selected}) => {
             data-ship={ship.class}
             draggable
             onClick={onClick}
-            onDragEnd={DragEnd}
+            onDragEnd={(e) => DragEnd(e,user,ship,element,dispatch)}
             style={{
                 display : "flex",
                 flexDirection : ship.direction,
@@ -145,10 +104,6 @@ const SetShips = ({user,selected,setSelected}) => (
         </div>
 )
 
-const GetShips = () => {
-
-}
-
 const MyShips = ({user}) => {
 
     const [state,dispatch] = useContext(Context)
@@ -157,27 +112,19 @@ const MyShips = ({user}) => {
 
     return(
         <>
-        {
-            user.play ? (
-                <GetShips />
-            ) : (
-                <>
-                <h1 className="header">Ułóż statki</h1>
-                <SetShips user={user} selected={selected} setSelected={setSelected} />
-                <Mess mess={mess} />
-                <Btns selected={selected} user={user} dispatch={dispatch} setMess={setMess} />
-                <button 
-                    className="confirm"
-                    onClick={() => dispatch({
-                        type : "CONFIRM",
-                        user : `user${user.user}`,
-                    })}
-                >
-                    Potwierdz 
-                </button>
-                </>
-            )
-        }
+            <h1 className="header">Ułóż statki</h1>
+            <SetShips user={user} selected={selected} setSelected={setSelected} />
+            <Mess mess={mess} />
+            <Btns selected={selected} user={user} dispatch={dispatch} setMess={setMess} />
+            <button 
+                className="confirm"
+                onClick={() => dispatch({
+                    type : "CONFIRM",
+                    user : `user${user.user}`,
+                })}
+            >
+                Potwierdz 
+            </button>
         </>
     )
 }

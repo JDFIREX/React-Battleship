@@ -15,7 +15,18 @@
         margin-top: .5rem;
         padding: 0 1rem;
     }
-
+    .mess{
+        text-align: center;
+    }
+    .btns{
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: row;
+        button{
+            margin: 0 1rem;
+            padding: 0 1rem;
+        }
+    }
     .header{
         margin-top: 1rem;
     }
@@ -45,16 +56,33 @@
             }
         }
     }
-    .mess{
-        text-align: center;
-    }
-    .btns{
-        margin-top: 2rem;
-        display: flex;
-        flex-direction: row;
-        button{
-            margin: 0 1rem;
-            padding: 0 1rem;
+    .my-ships-setup,.my-shots{
+        cursor: not-allowed;
+        margin-top: 1rem;
+        display: grid;
+        width: 20rem;
+        height: 20rem;
+        grid-template-columns: repeat(10, 2rem);
+        grid-template-rows: repeat(10, 2rem);
+        border: 1px solid red;
+ 
+    
+        .cell{
+            border: 1px solid black;
+            width: 2rem;
+            height: 2rem;
+        }
+        .myship,.myShot{
+            border: none;
         }
     }
+    .my-shots{
+        cursor: pointer;
+
+        .myShot{
+            cursor: not-allowed;
+        }
+    }
+    
 }
+

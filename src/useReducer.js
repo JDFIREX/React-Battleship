@@ -80,18 +80,26 @@ let ships = {
 export const initalState = {
     user1 : {
         user : 1,
+        myTurn : true,
         play : false,
-        points : 0,
+        win : false,
+        end : false,
+        shipsPoints : 17,
         shots : [],
+        hit : [],
         shipsPoss : [],
         shipsbox,
         ships
     },
     user2 : {
         user : 2,
+        myTurn : false,
         play : false,
-        points : 0,
+        win : false,
+        end : false,
+        shipsPoints : 17,
         shots : [],
+        hit : [],
         shipsPoss : [],
         shipsbox,
         ships
@@ -129,27 +137,67 @@ export const reducer = (state,action) => {
         }
         let shipsPossConfirm = []
         Object.keys(state[action.user].ships).forEach(a => {
+            a = state[action.user].ships[a]
             if(a.direction === "row"){
 
-                let si = ((a.poss.y1 * 10) - 10) + a.poss.x1;
-                let ei = ((a.poss.y1 * 10) - 10) + a.poss.x1 + a.cells;
+                let si = ((a.poss.y1 * 10) - 10) + a.poss.x1  - 1;
+                let ei = si + a.cells;
                 for(let i = si; i < ei; i++){
                     shipsPossConfirm.push(`cell${i}`)
                 }
-
+            }else {
+                let si = ((a.poss.y1 * 10) - 10) + a.poss.x1 - 1;
+                let ei = ((a.poss.y2 * 10) - 10) + a.poss.x1 - 1;
+                for(let i = si; i < ei; i += 10){
+                    shipsPossConfirm.push(`cell${i}`)
+                }
             }
         })
-
 
         return {
             ...state,
             [action.user] : {
                 ...state[action.user],
                 play : true,
-                shipPoss : shipsPossConfirm,
+                shipsPoss : shipsPossConfirm,
                 shipsbox : newshipsbox
             }
         }
+
+        case "SHOT" : 
+
+        let enemypoints = state[action.enemy].shipsPoints
+        let mshots = state[action.cuser].shots
+        mshots.push(action.shot)
+        let enemyHits = state[action.enemy].hit;
+        enemyHits.push(action.shot)
+        let win = false;
+        let end = false;
+        if(state[action.enemy].shipsPoss.includes(action.shot)){
+            enemypoints =  enemypoints - 1;
+        }
+        if(enemypoints === 0){
+            win = true;
+            end = true;
+        }
+
+        return {
+            ...state,
+            [action.cuser] : {
+                ...state[action.cuser],
+                win,
+                end,
+                shots : mshots
+            },
+            [action.enemy] : {
+                ...state[action.enemy],
+                end,
+                win,
+                hit : enemyHits,
+                shipsPoints : enemypoints
+            }
+        }
+
 
         default : return ;
     }

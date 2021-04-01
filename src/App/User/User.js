@@ -1,7 +1,9 @@
-import React, {useContext, useEffect, useState} from "react"
+import React, {useContext} from "react"
 import {Context} from "./../../useReducer"
 import "./user.css"
 import MyShips from "./MyShips"
+import GetShips from "./GetShips"
+import MyShots from "./MyShots"
 
 const User = ({id}) => {
 
@@ -13,26 +15,33 @@ const User = ({id}) => {
     }else {
         seconduser = state[`user1`]
     }
-    console.log(state)
 
 
     return (
         <div className={`user  user${id}`}>
         {
-            [!user.play] ? (
+            user.play === false  ? (
                 <>
                     <h1 className="userid">user{id}</h1>
                     <MyShips user={user} />
                 </>
-            ) : (user.play && state[seconduser].play) ? (
-                <>
-                {/* <MyShips user={user} /> */}
-                {/* <MyShots /> */}
-                </>
-            ) : (
-                <div>
-                    Czekaj na drugiego użytkownika
-                </div>
+            ) : user.play === true && (
+                
+                seconduser.play === true ? (
+                    <>
+                    <GetShips user={user} />
+                    <MyShots user={user} dispatch={dispatch} />
+                    </>
+                ) : (
+                    <div 
+                        style={{
+                            marginTop: "1rem"
+                        }}
+                    >
+                        Czekaj na drugiego użytkownika
+                    </div>
+                )
+                
             )
         }
             

@@ -101,5 +101,44 @@ const confirmPoss = (top,left,sl,nd,element,user,ship,dispatch,setMess) => {
     }
 
 }
+export const Rotate = (ship,user,dispatch,rotate,setMess) => {
+    let sl = ship.cells;
+    let nd;
+    let top;
+    let left;
+    
+    if(rotate === "left"){
+        if(ship.direction === "row"){
+            top = ship.poss.y1 - (sl - 1);
+            left = ship.poss.x1; 
+            nd = "column";
+        }else {
+            top  = ship.poss.y2 - 1;
+            left = ship.poss.x1 - (sl - 1);
+            nd = "row"
+        }
+    }else{
+        if(ship.direction === "row"){
+            top = ship.poss.y1 - (sl - 1);
+            left = ship.poss.x2 - 1; 
+            nd = "column";
+        }else {
+            top  = ship.poss.y2 - 1;
+            left = ship.poss.x1;
+            nd = "row"
+        }
+    }
 
-export default confirmPoss
+    confirmPoss(top,left,sl,nd,0,user,ship,dispatch,setMess)
+
+}
+
+export const DragEnd = (e,user,ship,element,dispatch) => {
+    let coords = document.querySelector(`.myships${user.user}`).getBoundingClientRect();
+    let top = Math.ceil((e.pageY - coords.top) / 36)
+    let left = Math.ceil((e.pageX - coords.left) / 36)
+    let slength = user.ships[e.target.dataset.ship].cells;
+    let direction = user.ships[e.target.dataset.ship].direction;
+    confirmPoss(top,left,slength,direction,element,user,ship,dispatch,false)
+
+}

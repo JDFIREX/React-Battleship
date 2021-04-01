@@ -25,6 +25,26 @@
   padding: 0 1rem;
 }
 
+.user .mess {
+  text-align: center;
+}
+
+.user .btns {
+  margin-top: 2rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.user .btns button {
+  margin: 0 1rem;
+  padding: 0 1rem;
+}
+
 .user .header {
   margin-top: 1rem;
 }
@@ -59,23 +79,35 @@
   height: 2rem;
 }
 
-.user .mess {
-  text-align: center;
+.user .my-ships-setup, .user .my-shots {
+  cursor: not-allowed;
+  margin-top: 1rem;
+  display: -ms-grid;
+  display: grid;
+  width: 20rem;
+  height: 20rem;
+  -ms-grid-columns: (2rem)[10];
+      grid-template-columns: repeat(10, 2rem);
+  -ms-grid-rows: (2rem)[10];
+      grid-template-rows: repeat(10, 2rem);
+  border: 1px solid red;
 }
 
-.user .btns {
-  margin-top: 2rem;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
+.user .my-ships-setup .cell, .user .my-shots .cell {
+  border: 1px solid black;
+  width: 2rem;
+  height: 2rem;
 }
 
-.user .btns button {
-  margin: 0 1rem;
-  padding: 0 1rem;
+.user .my-ships-setup .myship, .user .my-ships-setup .myShot, .user .my-shots .myship, .user .my-shots .myShot {
+  border: none;
+}
+
+.user .my-shots {
+  cursor: pointer;
+}
+
+.user .my-shots .myShot {
+  cursor: not-allowed;
 }
 /*# sourceMappingURL=user.css.map */
