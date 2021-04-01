@@ -81,12 +81,18 @@ export const initalState = {
     user1 : {
         user : 1,
         play : false,
+        points : 0,
+        shots : [],
+        shipsPoss : [],
         shipsbox,
         ships
     },
     user2 : {
         user : 2,
         play : false,
+        points : 0,
+        shots : [],
+        shipsPoss : [],
         shipsbox,
         ships
     }
@@ -105,9 +111,43 @@ export const reducer = (state,action) => {
                     ...state[action.user].ships,
                     [action.cell] : {
                         ...state[action.user].ships[action.cell],
+                        direction : action.direction,
                         poss : action.poss
                     }
                 }
+            }
+        }
+
+        case "CONFIRM" :
+
+        let newshipsbox = []
+        for(let i = 0 ; i < 100; i++){
+            newshipsbox.push({
+                id : i,
+                class : `cell${i}`
+            })
+        }
+        let shipsPossConfirm = []
+        Object.keys(state[action.user].ships).forEach(a => {
+            if(a.direction === "row"){
+
+                let si = ((a.poss.y1 * 10) - 10) + a.poss.x1;
+                let ei = ((a.poss.y1 * 10) - 10) + a.poss.x1 + a.cells;
+                for(let i = si; i < ei; i++){
+                    shipsPossConfirm.push(`cell${i}`)
+                }
+
+            }
+        })
+
+
+        return {
+            ...state,
+            [action.user] : {
+                ...state[action.user],
+                play : true,
+                shipPoss : shipsPossConfirm,
+                shipsbox : newshipsbox
             }
         }
 
