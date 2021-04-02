@@ -12,6 +12,9 @@ const GetCell = ({a,user}) => {
     }
     if(user.hit.includes(a.class)){
         s = "red"
+        if(user.shipsPoss.includes(a.class)){
+            s = "yellow"
+        }
     }
 
     return (

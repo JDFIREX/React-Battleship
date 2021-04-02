@@ -29,8 +29,9 @@ const User = ({id}) => {
                 
                 seconduser.play === true ? (
                     <>
+                    <h1 className="userid">user{id}</h1>
                     <GetShips user={user} />
-                    <MyShots user={user} dispatch={dispatch} />
+                    <MyShots user={user} dispatch={dispatch} seconduser={seconduser} />
                     </>
                 ) : (
                     <div 

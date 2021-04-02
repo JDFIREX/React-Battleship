@@ -110,4 +110,8 @@
 .user .my-shots .myShot {
   cursor: not-allowed;
 }
+
+.user .my-shots .notAllowed {
+  cursor: not-allowed;
+}
 /*# sourceMappingURL=user.css.map */

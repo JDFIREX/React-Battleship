@@ -187,12 +187,13 @@ export const reducer = (state,action) => {
                 ...state[action.cuser],
                 win,
                 end,
+                myTurn : false,
                 shots : mshots
             },
             [action.enemy] : {
                 ...state[action.enemy],
                 end,
-                win,
+                myTurn : true,
                 hit : enemyHits,
                 shipsPoints : enemypoints
             }
