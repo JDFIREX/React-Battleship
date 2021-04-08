@@ -2,7 +2,7 @@
     width: 50%;
     height: 100%;
     min-height: 100vh;
-    border: 1px solid black;
+    border-right: 1px solid black;
     display: flex;
     flex-direction: column;
     align-items: center;   
@@ -14,6 +14,7 @@
     .confirm{
         margin-top: .5rem;
         padding: 0 1rem;
+        color : black;
     }
     .mess{
         text-align: center;
@@ -23,6 +24,7 @@
         display: flex;
         flex-direction: row;
         button{
+            color : black;
             margin: 0 1rem;
             padding: 0 1rem;
         }
@@ -37,16 +39,15 @@
         height: 20rem;
         grid-template-columns: repeat(10, 2rem);
         grid-template-rows: repeat(10, 2rem);
-        border: 1px solid red;
 
 
         .box{
-            border: 1px solid black;
+            border: 1px solid #e9e9eb;
             width: 2rem;
             height: 2rem;
         }
         .ship{
-            background-color: blue;
+            background-color: #3d619b;
             width: 100%;
             height: 100%;
 
@@ -64,13 +65,12 @@
         height: 20rem;
         grid-template-columns: repeat(10, 2rem);
         grid-template-rows: repeat(10, 2rem);
-        border: 1px solid red;
  
     
         .cell{
-            border: 1px solid black;
             width: 2rem;
             height: 2rem;
+            border: 1px solid #e9e9eb;
         }
         .myship,.myShot{
             border: none;
@@ -79,6 +79,11 @@
     .my-shots{
         cursor: pointer;
 
+        .cell{
+            &:hover{
+                background-color: rgb(11, 0, 58);
+            }
+        }
         .myShot{
             cursor: not-allowed;
         }

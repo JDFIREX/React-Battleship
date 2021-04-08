@@ -135,7 +135,7 @@ export const Rotate = (ship,user,dispatch,rotate,setMess) => {
 
 export const DragEnd = (e,user,ship,element,dispatch) => {
     let coords = document.querySelector(`.myships${user.user}`).getBoundingClientRect();
-    let top = Math.ceil((e.pageY - coords.top) / 36)
+    let top = Math.ceil( ( (e.pageY - coords.top)  ) / 36) - Math.floor(window.scrollY / 36) 
     let left = Math.ceil((e.pageX - coords.left) / 36)
     let slength = user.ships[e.target.dataset.ship].cells;
     let direction = user.ships[e.target.dataset.ship].direction;

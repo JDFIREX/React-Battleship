@@ -5,21 +5,20 @@ const GetCell = ({a,user}) => {
 
     let s;
     let c;
-    let d;
     if(user.shipsPoss.includes(a.class)){
-        s = `blue`
+        s = `#3d619b`
         c = "myship"
     }
     if(user.hit.includes(a.class)){
-        s = "red"
+        s = "#ef484C"
         if(user.shipsPoss.includes(a.class)){
-            s = "yellow"
+            s = "#c1549c"
         }
     }
 
     return (
         <div 
-            className={`cell ${a.class}  ${c}  ${d}`}
+            className={`cell ${a.class}  ${c} `}
             style={{
                 backgroundColor : s
             }}

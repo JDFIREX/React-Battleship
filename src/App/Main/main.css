@@ -1,11 +1,17 @@
 .userBtn {
   margin: 0 5rem;
   padding: 1rem 2rem;
-  border: 1px solid gray;
   border-radius: 15px;
+  color: black;
 }
 
 .EndGame {
   text-align: center;
+}
+
+.EndGame button {
+  margin-top: 2rem;
+  padding: .1rem 1rem;
+  color: black;
 }
 /*# sourceMappingURL=main.css.map */

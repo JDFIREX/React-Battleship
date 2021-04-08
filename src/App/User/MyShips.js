@@ -4,6 +4,7 @@ import "./user.css"
 import {DragEnd,Rotate} from "./Poss"
 
 const Box = ({a}) => <div className={`box  ${a.id}`}></div>
+
 const Btns = ({selected,user,dispatch,setMess}) => {
     return(
         <div className="btns">
@@ -19,7 +20,12 @@ const Btns = ({selected,user,dispatch,setMess}) => {
                             setMess
                         )}
                     >Rotate Left</button>
-                    <p>{selected}</p>
+                    <p>{
+                        selected === "cell1" ? "statek 1" :
+                        selected === "cell2" ? "statek 2" :
+                        selected === "cell3" ? "statek 3" :
+                        selected === "cell4" ? "statek 4" : "statek 5" 
+                        }</p>
                     <button
                         onClick={() => Rotate(
                             user.ships[selected],
@@ -64,7 +70,8 @@ const SetShip = ({ship,user,onClick,selected}) => {
                 display : "flex",
                 flexDirection : ship.direction,
                 gridArea : `${ship.poss.y1} / ${ship.poss.x1} / ${ship.poss.y2} / ${ship.poss.x2}`,
-                border : selected === ship.class && "1px solid yellow"
+                border : selected === ship.class && "1px solid #ef484c",
+                backgroundColor : selected === ship.class && "#263f66"
             }}
         >
             {

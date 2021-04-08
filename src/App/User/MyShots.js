@@ -17,9 +17,9 @@ const Cell = ({a,user,dispatch,seconduser}) => {
     let c;
     if(user.shots.includes(a.class)){
         if(seconduser.shipsPoss.includes(a.class)){
-            s = "blue"
+            s = "#c1549c"
         }else {
-            s = "red"
+            s = "#4699c2"
         }
         c = "myShot"
     }
