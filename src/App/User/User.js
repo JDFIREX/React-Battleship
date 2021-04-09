@@ -1,12 +1,16 @@
 import React, {useContext} from "react"
 import {Context} from "./../../useReducer"
+import {
+    useParams
+} from "react-router-dom";
 import "./user.css"
 import MyShips from "./MyShips"
 import GetShips from "./GetShips"
 import MyShots from "./MyShots"
 
-const User = ({id}) => {
+const User = () => {
 
+    const {id} = useParams()
     const [state,dispatch] = useContext(Context)
     const user = state[`user${id}`]
     let seconduser;

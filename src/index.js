@@ -2,6 +2,13 @@ import React, {useReducer} from  "react"
 import ReactDOM  from "react-dom"
 import {reducer, initalState,Context} from "./useReducer.js"
 import Main  from "./App/Main/Main"
+import User from "./App/User/User"
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+  } from "react-router-dom";
 import "./index.css"
 
 const Root = () => {
@@ -11,7 +18,21 @@ const Root = () => {
     return (
         <React.StrictMode>
             <Context.Provider value={[state,dispatch]}>
-                <Main />
+            <Router>
+                <>
+                    <Switch>
+                    <Route path="/user/:id">
+                        <User />
+                    </Route>
+                    <Route path="/">
+                        <Main />
+                    </Route>
+                    <Route path="*">
+                        <Main />
+                    </Route>
+                    </Switch>
+                </>
+            </Router>
             </Context.Provider>
         </React.StrictMode>
     )
