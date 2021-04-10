@@ -1,16 +1,32 @@
-.userBtn{
-    margin: 0 5rem;
-    padding: 1rem 2rem;
-    border-radius: 15px;
-    color : black;
-}
+// .userBtn{
+//     margin: 0 5rem;
+//     padding: 1rem 2rem;
+//     border-radius: 15px;
+//     color : black;
+// }
 
-.EndGame{
-    text-align: center;
+// .EndGame{
+//     text-align: center;
+
+//     button{
+//         margin-top: 2rem;
+//         padding: .1rem 1rem;
+//         color : black;
+//     }
+// }
+
+.main{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+
 
     button{
-        margin-top: 2rem;
-        padding: .1rem 1rem;
-        color : black;
+        margin: 0 1rem;
+        color: black;
+        padding: .2rem 2rem;
     }
 }

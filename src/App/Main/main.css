@@ -1,17 +1,24 @@
-.userBtn {
-  margin: 0 5rem;
-  padding: 1rem 2rem;
-  border-radius: 15px;
-  color: black;
+.main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
-.EndGame {
-  text-align: center;
-}
-
-.EndGame button {
-  margin-top: 2rem;
-  padding: .1rem 1rem;
+.main button {
+  margin: 0 1rem;
   color: black;
+  padding: .2rem 2rem;
 }
 /*# sourceMappingURL=main.css.map */

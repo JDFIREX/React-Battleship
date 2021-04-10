@@ -1,4 +1,5 @@
 import React from "react"
+import { client, q } from "./faunaDB"
 
 // const shipsBox = 
 let shipsbox = [];
@@ -81,6 +82,7 @@ export const initalState = {
     user1 : {
         user : 1,
         myTurn : true,
+        connect : false,
         play : false,
         win : false,
         end : false,
@@ -94,6 +96,7 @@ export const initalState = {
     user2 : {
         user : 2,
         myTurn : false,
+        connect : false,
         play : false,
         win : false,
         end : false,
@@ -106,8 +109,48 @@ export const initalState = {
     }
 }
 
+const FaunaDBUpdate = (state,id) => {
+    let data = false;
+    client.query(
+        q.Update(
+            q.Ref( q.Collection(`${id}`), `${id}`),
+            {
+                data : state
+            }
+        )
+    )
+    // client.query(
+    //     q.Get(
+    //         q.Collection(`${id}`)
+    //     )
+    // ).then((r) => {
+    //     if(r.data){
+    //         console.log(r.data)
+    //         data = {...r.data}
+    //     }
+    // })
+
+    // return await {...data}
+    
+}
+
 export const reducer = (state,action) => {
     switch(action.type){
+
+
+        case "CONNECT" : 
+
+            let CONNECTSTATE = {
+                ...state,
+                [action.user] : {
+                    ...state[action.user],
+                    connect : true
+                }
+            }
+            console.log(CONNECTSTATE)
+            CONNECTSTATE = FaunaDBUpdate(CONNECTSTATE, action.gameID)
+            console.log(CONNECTSTATE)
+            return;
 
         case "CHANGEPOSS" :
         
@@ -127,6 +170,8 @@ export const reducer = (state,action) => {
         }
 
         case "CONFIRM" :
+
+        console.log('wer')
 
         let newshipsbox = []
         for(let i = 0 ; i < 100; i++){
