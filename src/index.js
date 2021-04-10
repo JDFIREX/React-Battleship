@@ -1,39 +1,86 @@
-import React, {useReducer} from  "react"
+import React, {useEffect, useReducer} from  "react"
 import ReactDOM  from "react-dom"
 import {reducer, initalState,Context} from "./useReducer.js"
+import { client , q } from "./faunaDB"
 import Main  from "./App/Main/Main"
 import User from "./App/User/User"
 import {
     BrowserRouter as Router,
     Switch,
-    Route,
-    Link
-  } from "react-router-dom";
+    Route
+} from "react-router-dom";
 import "./index.css"
+
+const id = new Date().getTime()
+
+
+
+client.query(
+    q.CreateCollection({name : `${id}`})
+).then(r => {
+
+    console.log(r)
+    
+    client.query(
+        q.Create(
+            q.Collection(r.name),
+            {
+                data : {gameID : id, ...initalState}
+            }
+        )
+    ).then(r => console.log(r))
+
+
+
+    client.query(
+        q.Paginate(
+            q.Collections()
+        )
+    ).then(r => {
+        r.data = r.data.reverse()
+        r.data.shift()
+        r.data.shift()
+        r.data.shift()
+        r.data.shift()
+        r.data.shift()
+        r.data.forEach(a => {
+            client.query(
+                q.Get(
+                    q.Collection(a.id)
+                )
+            ).then(x => {
+                client.query(
+                    q.Delete(
+                        q.Collection(`${x.name}`)
+                    )
+                )
+            })
+        })
+    })
+})
+
 
 const Root = () => {
 
-    const [state,dispatch] = useReducer(reducer,initalState)
+
 
     return (
         <React.StrictMode>
-            <Context.Provider value={[state,dispatch]}>
-            <Router>
-                <>
-                    <Switch>
-                    <Route path="/user/:id">
-                        <User />
-                    </Route>
-                    <Route path="/">
-                        <Main />
-                    </Route>
-                    <Route path="*">
-                        <Main />
-                    </Route>
-                    </Switch>
-                </>
-            </Router>
-            </Context.Provider>
+                <Router>
+                    <>
+                        <Switch>
+                        <Route path="/user/:id">
+                            <User />
+                        </Route>
+                        <Route path="/">
+                            <Main gameID={id} />
+                        </Route>
+                        <Route path="*">
+                            <Main gameID={id} />
+                        </Route>
+                        </Switch>
+                    </>
+                </Router>
         </React.StrictMode>
     )
 }

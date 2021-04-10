@@ -1,4 +1,5 @@
 import React from "react"
+import { client,q } from "./faunaDB"
 
 // const shipsBox = 
 let shipsbox = [];
@@ -81,6 +82,7 @@ export const initalState = {
     user1 : {
         user : 1,
         myTurn : true,
+        connect : false,
         play : false,
         win : false,
         end : false,
@@ -94,6 +96,7 @@ export const initalState = {
     user2 : {
         user : 2,
         myTurn : false,
+        connect : false,
         play : false,
         win : false,
         end : false,
@@ -108,6 +111,55 @@ export const initalState = {
 
 export const reducer = (state,action) => {
     switch(action.type){
+
+
+        case "CONNECT" :
+
+            let CONNECTREF;
+            let c;
+            client.query(
+                q.Paginate(
+                    q.Documents(q.Collection(`${action.gameID}`))
+                )
+            ).then(r => {
+                CONNECTREF = r.data[0].value.id
+                console.log(CONNECTREF)
+                client.query(
+                    q.Update(
+                        q.Ref(q.Collection(`${action.gameID}`), CONNECTREF),
+                        {
+                            data : {
+                                ...state,
+                                [action.user] : {
+                                    ...state[action.user],
+                                    connect : true
+                                }
+                            }
+                        }
+                    )
+                ).then(r => {
+                    client.query(
+                        q.Get(
+                            q.Documents(q.Collection(`${action.gameID}`))
+                        )
+                    ).then(r => {
+                        reducer({
+                            type : "CONFIRMFAUNA",
+                            state : r.data
+                        })
+                    })
+                })
+            })
+
+
+
+        return;
+
+        case "CONFIRMFAUNA" :
+
+            console.log(action.state)
+
+            return {...action.state}
 
         case "CHANGEPOSS" :
         
