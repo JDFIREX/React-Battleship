@@ -6,7 +6,7 @@ import {
 
 const Main = ({gameID}) => {
     return(
-        <>
+        <div className="main">
             <div>
                 <h1>
                     Kod Gry : {gameID} 
@@ -22,7 +22,7 @@ const Main = ({gameID}) => {
                     User 2
                 </Link>
             </div>
-        </>
+        </div>
     )
 }
 
