@@ -1,3 +1,5 @@
+import { client,q } from "./../../faunaDB"
+
 const SetPoss = (top,left,sl,d,e) => {
     let topEnd;
     let leftEnd;
@@ -62,7 +64,51 @@ const SetOtherCoords = (u,s) => {
     return coords;
 }
 
-const confirmPoss = (top,left,sl,nd,element,user,ship,dispatch,setMess) => {
+
+
+function CHANGEPOSS(state,user,direction,cell,y1,x1,y2,x2,setData,gameID) {
+
+    let d = {...state};
+    d = {
+        ...d,
+        [user] :{
+            ...d[user],
+            ships : {
+                ...d[user].ships,
+                [cell] : {
+                    ...d[user].ships[cell],
+                    direction : direction,
+                    poss : {
+                        y1,
+                        x1,
+                        y2,
+                        x2
+                    }
+                }
+            }
+        }
+    }
+    setData(d)
+
+    client.query(
+        q.Paginate(
+            q.Documents(q.Collection(`${gameID}`))
+        )
+    ).then(r => {
+        let CONNECTREF = r.data[0].value.id
+        client.query(
+            q.Update(
+                q.Ref(q.Collection(`${gameID}`), CONNECTREF),
+                {
+                    data : {...d}
+                }
+            )
+        )
+    })
+
+}
+
+const confirmPoss = (top,left,sl,nd,element,user,ship,setData,setMess,gameID,state,x) => {
 
     let newPoss = SetPoss(top,left,sl,nd,element)
     let PossCoords = SetCoords(newPoss,nd)
@@ -79,29 +125,16 @@ const confirmPoss = (top,left,sl,nd,element,user,ship,dispatch,setMess) => {
         newPoss[1] <= 0
     ){
         if(setMess){
-            setMess("Nie mozna obrocic statku cos przeszkadza")
+            x === "drag" ? setMess("Nie mozna przeniesc statku cos przeszkadza") : setMess("Nie mozna obrocic statku cos przeszkadza")
         }
         return;
     }else {
-        if(setMess){
-            setMess("")
-        }
-        dispatch({
-            type : "CHANGEPOSS",
-            user : `user${user.user}`,
-            direction : nd,
-            cell : `${ship.class}`,
-            poss : {
-                y1 : newPoss[0],
-                x1 : newPoss[1],
-                y2 : newPoss[2],
-                x2 : newPoss[3]
-            }
-        })
+        setMess("")
+        CHANGEPOSS(state,`user${user.user}`,nd,ship.class,newPoss[0],newPoss[1],newPoss[2],newPoss[3],setData,gameID)
     }
 
 }
-export const Rotate = (ship,user,dispatch,rotate,setMess) => {
+export const Rotate = (ship,user,setData,gameID,state,rotate,setMess) => {
     let sl = ship.cells;
     let nd;
     let top;
@@ -129,16 +162,16 @@ export const Rotate = (ship,user,dispatch,rotate,setMess) => {
         }
     }
 
-    confirmPoss(top,left,sl,nd,0,user,ship,dispatch,setMess)
+    confirmPoss(top,left,sl,nd,0,user,ship,setData,setMess,gameID,state,"rotate")
 
 }
 
-export const DragEnd = (e,user,ship,element,dispatch) => {
+export const DragEnd = (e,user,ship,element,setData,gameID,state,setMess) => {
+    console.log(state,"dragend")
     let coords = document.querySelector(`.myships${user.user}`).getBoundingClientRect();
     let top = Math.ceil( ( (e.pageY - coords.top)  ) / 36) - Math.floor(window.scrollY / 36) 
     let left = Math.ceil((e.pageX - coords.left) / 36)
     let slength = user.ships[e.target.dataset.ship].cells;
     let direction = user.ships[e.target.dataset.ship].direction;
-    confirmPoss(top,left,slength,direction,element,user,ship,dispatch,false)
-
+    confirmPoss(top,left,slength,direction,element,user,ship,setData,setMess,gameID,state,"drag")
 }

@@ -4,18 +4,23 @@ import {
     useParams
 } from "react-router-dom";
 import "./user.css"
-// import MyShips from "./MyShips"
-// import GetShips from "./GetShips"
-// import MyShots from "./MyShots"
-function report(e,d) {
-    console.log(e)
+import MyShips from "./MyShips"
+import GetShips from "./GetShips"
+import MyShots from "./MyShots"
+import EndGame from "./../Main/EndGame"
+
+
+
+export function report(e,d) {
     if(e.action === "update"){
-        console.log(e.document.data,"wer")
         d(e.document.data)
     }
 }
-const startStream = (f,s,d) => {
-    let stream = client.stream.document(q.Ref(q.Collection(`${s}`), f))
+
+
+let stream;
+export const startStream = (f,s,d) => {
+    stream = client.stream.document(q.Ref(q.Collection(`${s}`), f))
     .on('snapshot', snapshot => {
       report(snapshot,d)
     })
@@ -30,50 +35,93 @@ const startStream = (f,s,d) => {
     .start()
   }
 
-const UserConnect = ({state,user,setData}) => {
 
-    console.log(state,user)
-    const enemy = user === "1" ? "user2" : "user1"
-
-    useEffect(() => {
-            let CONNECTREF;
+function updateFauna(user,state,setData,streamData = false) {
+    let CONNECTREF;
             
+    client.query(
+        q.Paginate(
+            q.Documents(q.Collection(`${state.gameID}`))
+        )
+    ).then(r => {
+        CONNECTREF = r.data[0].value.id
+        if(streamData){
+            startStream(CONNECTREF,state.gameID,setData)
+        }
+        let newState = state
+        newState[`user${user}`].connect = true
+        client.query(
+            q.Update(
+                q.Ref(q.Collection(`${state.gameID}`), CONNECTREF),
+                {
+                    data : {...newState}
+                }
+            )
+        ).then(r => {
             client.query(
-                q.Paginate(
+                q.Get(
                     q.Documents(q.Collection(`${state.gameID}`))
                 )
             ).then(r => {
-                CONNECTREF = r.data[0].value.id
-                startStream(CONNECTREF,state.gameID,setData)
-                console.log(CONNECTREF)
-                let newState = state
-                newState[`user${user}`].connect = true
-                client.query(
-                    q.Update(
-                        q.Ref(q.Collection(`${state.gameID}`), CONNECTREF),
-                        {
-                            data : {...newState}
-                        }
-                    )
-                ).then(r => {
-                    client.query(
-                        q.Get(
-                            q.Documents(q.Collection(`${state.gameID}`))
-                        )
-                    ).then(r => {
-                        setData({...r.data})
-                    })
-                })
+                setData({...r.data})
             })
+        })
+    })
+}
+
+const UserConnect = ({state,user,setData}) => {
+
+    let enemy = user === "1" ? state["user2"] : state["user1"];
+
+    useEffect(() => {
+            updateFauna(user,state,setData,true)
     },[])
 
+    console.log(user.end)
+
+    if(state[`user${user}`].end){
+        return (
+            <EndGame state={state} user={user} />
+        )
+    }
+
     return (
-        <div>
-            połączono   {user} {enemy}
+        <>
             {
-                state[enemy].connect === true ? "  połączony " : "  czekanie"
+                enemy.connect === false ? (
+                        `połączono   ${user}|  user${enemy.user} czekanie`
+                ) : (
+                    <div className={`user  user${user}`}>
+                    {
+                        state[`user${user}`].play === false  ? (
+                            <>
+                                <h1 className="userid">user{user}</h1>
+                                <MyShips gameID={state.gameID} user={state[`user${user}`]} state={state} setData={setData}/>
+                            </>
+                        ) : state[`user${user}`].play === true && (
+                            
+                            enemy.play === true ? (
+                                <>
+                                <h1 className="userid">user{user}</h1>
+                                <GetShips user={state[`user${user}`]} />
+                                <MyShots user={state[`user${user}`]} state={state} setData={setData} seconduser={enemy} />
+                                </>
+                            ) : (
+                                <div 
+                                    style={{
+                                        marginTop: "1rem"
+                                    }}
+                                >
+                                    Czekaj na drugiego użytkownika
+                                </div>
+                            )
+                            
+                        )
+                    }
+                    </div>
+                )
             }
-        </div>
+        </>
     )
 
 }
@@ -98,6 +146,10 @@ const User = () => {
         })
     },[gameID])
 
+    useEffect(() => {
+        console.log(data,"zmiana data")
+    },[data])
+
     if(gameID && data){
         return (
             <UserConnect state={data} user={id} setData={setData} />
@@ -117,46 +169,3 @@ const User = () => {
 
 
 export default User;
-
-// const [state,dispatch] = useContext(Context)
-//     const user = state[`user${id}`]
-//     let seconduser;
-//     if(id === 1 || id === "1"){
-//         seconduser = state[`user2`]
-//     }else {
-//         seconduser = state[`user1`]
-//     }
-
-
-
-// return (
-//     <div className={`user  user${id}`}>
-//     {
-//         user.play === false  ? (
-//             <>
-//                 <h1 className="userid">user{id}</h1>
-//                 <MyShips user={user} />
-//             </>
-//         ) : user.play === true && (
-            
-//             seconduser.play === true ? (
-//                 <>
-//                 <h1 className="userid">user{id}</h1>
-//                 <GetShips user={user} />
-//                 <MyShots user={user} dispatch={dispatch} seconduser={seconduser} />
-//                 </>
-//             ) : (
-//                 <div 
-//                     style={{
-//                         marginTop: "1rem"
-//                     }}
-//                 >
-//                     Czekaj na drugiego użytkownika
-//                 </div>
-//             )
-            
-//         )
-//     }
-        
-//     </div>
-// ) 

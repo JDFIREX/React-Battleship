@@ -1,4 +1,6 @@
 import React from "react"
+import { client,q } from "./../../faunaDB"
+
 
 const Hit = ({a,s}) => (
     <div 
@@ -11,7 +13,7 @@ const Hit = ({a,s}) => (
     </div>
 )
 
-const Cell = ({a,user,dispatch,seconduser}) => {
+const Cell = ({a,user,state,setData,seconduser}) => {
 
     let s;
     let c;
@@ -24,6 +26,71 @@ const Cell = ({a,user,dispatch,seconduser}) => {
         c = "myShot"
     }
 
+    const HandleClick = () => {
+        let enemy = user.user === 1 ? state["user2"] : state["user1"]
+        let shot = a.class
+
+
+        let enemypoints = enemy.shipsPoints
+        let mshots = user.shots
+        mshots.push(shot)
+        let enemyHits = enemy.hit;
+        enemyHits.push(shot)
+        let win = false;
+        let end = false;
+        if(enemy.shipsPoss.includes(shot)){
+            enemypoints =  enemypoints - 1;
+        }
+        if(enemypoints === 0){
+            win = true;
+            end = true;
+        }
+
+        let newState = {
+            ...state,
+            [`user${user.user}`] : {
+                ...state[`user${user.user}`],
+                win,
+                end,
+                myTurn : false,
+                shots : mshots
+            },
+            [`user${enemy.user}`] : {
+                ...state[`user${enemy.user}`],
+                end,
+                myTurn : true,
+                hit : enemyHits,
+                shipsPoints : enemypoints
+            }
+        }
+        setData(newState)
+
+        client.query(
+            q.Paginate(
+                q.Documents(q.Collection(`${state.gameID}`))
+            )
+        ).then(r => {
+            let ref = r.data[0].value.id;
+
+            client.query(
+                q.Update(
+                    q.Ref(q.Collection(`${state.gameID}`), ref),
+                    {
+                        data : newState
+                    }
+                )
+            ).then(r => {
+                client.query(
+                    q.Get(
+                        q.Documents(q.Collection(`${state.gameID}`))
+                    )
+                )
+
+            })
+        })
+
+    }
+
     return (
         <>
         {
@@ -33,13 +100,7 @@ const Cell = ({a,user,dispatch,seconduser}) => {
                     style={{
                         backgroundColor : s
                     }}
-                    onClick={() => dispatch({
-                            type : "SHOT",
-                            cuser : `user${user.user}`,
-                            enemy : user.user === 1 ? "user2" : "user1",
-                            shot : a.class
-                        })
-                    }
+                    onClick={HandleClick}
                 >
 
                 </div>
@@ -52,7 +113,7 @@ const Cell = ({a,user,dispatch,seconduser}) => {
     )
 }
 
-const MyShots = ({user,dispatch,seconduser}) => {
+const MyShots = ({user,state,setData,seconduser}) => {
 
 
     return (
@@ -70,7 +131,7 @@ const MyShots = ({user,dispatch,seconduser}) => {
         <div className="my-shots">
             {
                 user.shipsbox.map(a => {
-                    return <Cell key={`shot-${a.class}`} a={a} user={user} dispatch={dispatch} seconduser={seconduser} />
+                    return <Cell key={`shot-${a.class}`} a={a} user={user} state={state} setData={setData} seconduser={seconduser} />
                 })
             }
         </div>

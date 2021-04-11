@@ -1,11 +1,12 @@
-import React, {useContext, useEffect, useState} from "react"
-import {Context} from "./../../useReducer"
+import React, {useState} from "react"
 import "./user.css"
 import {DragEnd,Rotate} from "./Poss"
+import {startStream} from "./User"
+import { client,q } from "./../../faunaDB"
 
 const Box = ({a}) => <div className={`box  ${a.id}`}></div>
 
-const Btns = ({selected,user,dispatch,setMess}) => {
+const Btns = ({selected,user,setMess,setData,state,gameID}) => {
     return(
         <div className="btns">
             {
@@ -15,7 +16,9 @@ const Btns = ({selected,user,dispatch,setMess}) => {
                         onClick={() => Rotate(
                             user.ships[selected],
                             user,
-                            dispatch,
+                            setData,
+                            gameID,
+                            state,
                             "left",
                             setMess
                         )}
@@ -30,7 +33,9 @@ const Btns = ({selected,user,dispatch,setMess}) => {
                         onClick={() => Rotate(
                             user.ships[selected],
                             user,
-                            dispatch,
+                            setData,
+                            gameID,
+                            state,
                             "right",
                             setMess
                         )}
@@ -54,10 +59,10 @@ const Mess = ({mess}) => (
     </div>
 ) 
 
-const SetShip = ({ship,user,onClick,selected}) => {
+const SetShip = ({ship,user,onClick,selected,setData,gameID,state,setMess}) => {
 
     const [element,setElement] = useState(0)
-    const [state,dispatch] = useContext(Context)
+    console.log(state,"setShip")
 
     return (
         <div 
@@ -65,7 +70,7 @@ const SetShip = ({ship,user,onClick,selected}) => {
             data-ship={ship.class}
             draggable
             onClick={onClick}
-            onDragEnd={(e) => DragEnd(e,user,ship,element,dispatch)}
+            onDragEnd={(e) => DragEnd(e,user,ship,element,setData,gameID,state,setMess)}
             style={{
                 display : "flex",
                 flexDirection : ship.direction,
@@ -87,20 +92,21 @@ const SetShip = ({ship,user,onClick,selected}) => {
         </div>
     )
 }
-const SetShips = ({user,selected,setSelected}) => (
+const SetShips = ({user,selected,setSelected,setData,gameID,state,setMess}) => (
     <div className={`myships myships${user.user}`}>
             {
                 user.shipsbox.map(a => {
-
-
-
                     return user.ships[a.class] ? (
                         <SetShip 
                             ship={user.ships[a.class]} 
                             a={a} 
                             key={a.class} 
+                            setData={setData}
+                            state={state}
                             user={user} 
+                            setMess={setMess}
                             selected={selected}
+                            gameID={gameID}
                             onClick={() => setSelected(a.class)} 
                         />
                     ) : (
@@ -111,24 +117,94 @@ const SetShips = ({user,selected,setSelected}) => (
         </div>
 )
 
-const MyShips = ({user}) => {
+const MyShips = ({user,setData,state,gameID}) => {
 
-    const [state,dispatch] = useContext(Context)
+    console.log(gameID)
+
     const [selected,setSelected] = useState(null)
     const [mess,setMess] = useState("")
+
+
+    const handleClick = () => {
+
+        let Stateuser = {...user};
+
+        let newshipsbox = []
+        for(let i = 0 ; i < 100; i++){
+            newshipsbox.push({
+                id : i,
+                class : `cell${i}`
+            })
+        }
+        let shipsPossConfirm = []
+        Object.keys(user.ships).forEach(a => {
+            a = user.ships[a]
+            if(a.direction === "row"){
+
+                let si = ((a.poss.y1 * 10) - 10) + a.poss.x1  - 1;
+                let ei = si + a.cells;
+                for(let i = si; i < ei; i++){
+                    shipsPossConfirm.push(`cell${i}`)
+                }
+            }else {
+                let si = ((a.poss.y1 * 10) - 10) + a.poss.x1 - 1;
+                let ei = ((a.poss.y2 * 10) - 10) + a.poss.x1 - 1;
+                for(let i = si; i < ei; i += 10){
+                    shipsPossConfirm.push(`cell${i}`)
+                }
+            }
+        })
+
+        Stateuser = {
+            ...Stateuser,
+            play : true,
+            shipsPoss : shipsPossConfirm,
+            shipsbox : newshipsbox
+        }
+
+        client.query(
+            q.Paginate(
+                q.Documents(q.Collection(`${state.gameID}`))
+            )
+        ).then(r => {
+            let ref = r.data[0].value.id;
+
+            startStream(ref,state.gameID,setData)
+
+            client.query(
+                q.Update(
+                    q.Ref(q.Collection(`${state.gameID}`), ref),
+                    {
+                        data : {
+                            ...state,
+                            [`user${user.user}`] : Stateuser
+                        }
+                    }
+                )
+            ).then(r => {
+                client.query(
+                    q.Get(
+                        q.Documents(q.Collection(`${state.gameID}`))
+                    )
+                ).then(r => {
+                    setData({...r.data})
+                })
+
+            })
+
+        })
+        
+    }
 
     return(
         <>
             <h1 className="header">Ułóż statki</h1>
-            <SetShips user={user} selected={selected} setSelected={setSelected} />
+            <SetShips state={state} gameID={gameID} user={user} selected={selected} setSelected={setSelected} setData={setData} setMess={setMess} />
             <Mess mess={mess} />
-            <Btns selected={selected} user={user} dispatch={dispatch} setMess={setMess} />
+            <Btns selected={selected} user={user} setMess={setMess} setData={setData} state={state} gameID={gameID} />
             <button 
                 className="confirm"
-                onClick={() => dispatch({
-                    type : "CONFIRM",
-                    user : `user${user.user}`,
-                })}
+                onClick={handleClick}
             >
                 Potwierdz 
             </button>
