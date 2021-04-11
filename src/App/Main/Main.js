@@ -7,9 +7,13 @@ import {
 const Main = ({gameID}) => {
     return(
         <>
-            <h1>
-                Kod Gry : {gameID} 
-            </h1>  
+            <div>
+                <h1>
+                    Kod Gry : {gameID} 
+                </h1>  
+            </div>
+            <br />
+            <br />
             <div>
                 <Link to="user/1" target="_blank" >
                     User 1
